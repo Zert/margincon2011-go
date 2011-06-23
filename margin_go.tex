@@ -1,0 +1,220 @@
+\documentclass{beamer}
+\mode<presentation>{
+  \usetheme{Warsaw}
+
+  \definecolor{beamer@blendedred}{rgb}{0.7,0.1,0.1}
+  \setbeamercolor{structure}{fg=beamer@blendedred}
+
+  \setbeamercovered{invisible}
+}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{multimedia}
+\usepackage{hyperref}
+\logo{\includegraphics[height=0.3cm]{valknut.png}}
+
+\definecolor{ExclamMark}{RGB}{34, 89, 150}
+
+\title{GO!!}
+\author{Максим Трескин\\ \texttt{mtreskin@metachord.com} \\ \texttt{@mtreskin}}
+\date[2011.06.25]{25 июня, 2011}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{GO!!}
+  \begin{minipage}[t]{90px}
+    \hfil
+    \includegraphics[height=7cm]{gopher_c.png}
+    \hfil
+  \end{minipage}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Кто и когда?}
+  Ken Thompson, Rob Pike и Robert Griesemer @ Google\\
+  21 Сентября 2007 года
+\end{frame}
+
+\begin{frame}
+  \frametitle{Зачем?}
+  \begin{itemize}
+  \item Ускорение разработки приложений
+  \item Решение проблемы зависимостей
+  \item Избавление от громоздких систем типов (C++, Java), повышение динамичности
+  \item Хорошая поддержка сборки мусора и параллельных вычислений
+  \item Утилизация ресурсов многоядерных систем
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Методы могут быть определены для любого типа данных}
+\begin{verbatim}
+type Complex struct {
+    real    float64
+    imag    float64
+}
+
+func (cn *Complex) modulus() float64 {
+    sum := math.Pow(cn.real, 2) + math.Pow(cn.imag, 2)
+    return math.Sqrt(sum)
+}
+
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Нет наследования, есть интерфейсы}
+\begin{verbatim}
+type Client struct {
+    id      int
+    name    string
+}
+
+type Manager struct {
+    name    string
+    level   int
+}
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Нет наследования, есть интерфейсы}
+\begin{verbatim}
+type Printable interface {
+    Print()
+}
+
+func (cl Client) Print() {
+    fmt.Printf("ID: %d, Name: %s\n", cl.id, cl.name)
+}
+
+func (mg Manager) Print() {
+    fmt.Printf("Level: %d, Name: %s\n", mg.level, mg.name)
+}
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Нет наследования, есть интерфейсы}
+\begin{verbatim}
+func main() {
+    var c *Client
+    var m *Manager
+    var p Printable
+
+    c = new(Client); c.id = 5; c.name = "Kosh"
+    m = new(Manager); m.name = "Krabutnica"; m.level = 10
+
+    p = c; p.Print()
+    p = m; p.Print()
+}
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Кое-что, облегчающее жизнь}
+  \begin{itemize}
+  \item Функции — значения первого класса
+    \pause
+  \item Функции могут возвращать несколько значений
+    \pause
+  \item Нет перегрузки операторов или методов
+    \pause
+  \item Нет неявного преобразования численных типов
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Многопоточность}
+  \Large{\textit{\color{ExclamMark}{Не общайтесь с помощью раздельной памяти. Разделяйте память с помощью общения}}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Многопоточность}
+  \begin{itemize}
+  \item Goroutines. Just add \texttt{go}
+    \pause
+  \item Каналы
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Многопоточность: Каналы}
+\begin{verbatim}
+//Создание
+КаналЦелых := make(chan int)
+КаналФайлов := make(chan *os.File, 100)
+
+//Посылка
+go func() {
+    КаналЦелых <- 14
+}()
+
+//Приём
+ЕстьЧто := <- КаналЦелых
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Обработка ошибок (и не только): Defer}
+\begin{verbatim}
+func Contents(filename string) (string, os.Error) {
+    f, err := os.Open(filename, os.O_RDONLY, 0)
+    if err != nil {
+        return "", err
+    }
+    defer f.Close()
+    ....
+}
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Ещё немного хорошего}
+  \begin{itemize}
+  \item Массивы — значения
+    \pause
+  \item Слайсы — ссылки на куски массивов, способные динамически изменять размер
+    \pause
+  \item Ассоциативные массивы
+    \pause
+  \item Форматирование произвольных структур (\texttt{"\%v"})
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ресурсы}
+  \begin{itemize}
+  \item {\color{blue}\url{http://golang.org}}
+  \item golang-nuts, golang-russian на гуглогруппах
+  \item GolangRu на Фейсбуці
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Вопросы?}
+  \titlepage
+\end{frame}
+
+
+\end{document}
