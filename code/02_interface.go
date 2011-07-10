@@ -10,8 +10,8 @@ type Client struct {
 }
 
 type Manager struct {
-	name    string
-	level   int
+	name     string
+	clients  []int
 }
 
 type Printable interface {
@@ -23,7 +23,8 @@ func (cl Client) Print() {
 }
 
 func (mg Manager) Print() {
-	fmt.Printf("Level: %d, Name: %s\n", mg.level, mg.name)
+	fmt.Printf("Name: %s, Clients: %d\n",
+               mg.name, len(mg.clients))
 }
 
 func main() {
@@ -32,7 +33,7 @@ func main() {
     var p Printable
 
     c = new(Client); c.id = 5; c.name = "Kosh"
-    m = new(Manager); m.name = "Krabutnica"; m.level = 10
+    m = new(Manager); m.name = "Krabutnica"; m.clients = []int{1,2,3}
 
     p = c; p.Print()
     p = m; p.Print()

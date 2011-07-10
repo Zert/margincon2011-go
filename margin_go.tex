@@ -55,6 +55,17 @@
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{Что?}
+  \begin{itemize}
+  \item Язык общего назначения, особенно пригодный для системного программирования
+  \item Строго типизирован, со сборкой мусора и поддержкой многопоточности
+  \item Приложения составляются из пакетов
+  \item Очень компактная грамматика (полезно для реализации инструментов, работающих с кодом)
+  \end{itemize}
+\end{frame}
+
+
 
 \begin{frame}[fragile]
   \frametitle{Методы могут быть определены для любого типа данных}
@@ -83,7 +94,7 @@ type Client struct {
 
 type Manager struct {
     name    string
-    level   int
+    clients  []int
 }
 \end{verbatim}
 \end{frame}
@@ -101,7 +112,8 @@ func (cl Client) Print() {
 }
 
 func (mg Manager) Print() {
-    fmt.Printf("Level: %d, Name: %s\n", mg.level, mg.name)
+    fmt.Printf("Name: %s, Clients: %d\n",
+               mg.name, len(mg.clients))
 }
 \end{verbatim}
 \end{frame}
@@ -191,13 +203,20 @@ func Contents(filename string) (string, os.Error) {
 \begin{frame}
   \frametitle{Ещё немного хорошего}
   \begin{itemize}
-  \item Массивы — значения
-    \pause
   \item Слайсы — ссылки на куски массивов, способные динамически изменять размер
-    \pause
   \item Ассоциативные массивы
-    \pause
   \item Форматирование произвольных структур (\texttt{"\%v"})
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Инфраструктура}
+  \begin{itemize}
+  \item godoc — документирование
+  \item gofmt — форматирование кода (аналог всяких разных *tidy или indent для Go)
+  \item gotest — легковесный фреймворк для тестирования
+  \item gofix — обновление кода для новых версий языка
+  \item goinstall — установка библиотек
   \end{itemize}
 \end{frame}
 
